@@ -16,11 +16,11 @@ ul {
 }
 
 a:link,
-a:visited,
-a:hover,
-a:active {
-  text-decoration: none;
-}
+ a:visited,
+ a:hover,
+ a:active {
+   text-decoration: none;
+ }
 
 .red {
   color: #A94442;
