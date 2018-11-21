@@ -57,7 +57,10 @@ $(".icon_menu").click(function(){
     $('.lt_aside').toggleClass("hidemenu");
     $('.lt_main').toggleClass("hidemenu");
     $('.lt_topbar').toggleClass("hidemenu");
-})
+});
+
+
+
 
 $('.icon_logout').click(function(){
     $('#logoutModal').modal("show");

@@ -77,6 +77,10 @@ a:active {
     padding-left: 40px;
     border-left: 3px solid transparent;
 }
+.lt_aside .nav a.current {
+    background-color: #1D1F21;
+    border-left: 3px solid #006699;
+}
 .lt_aside .nav i {
     margin-right: 5px;
 }
