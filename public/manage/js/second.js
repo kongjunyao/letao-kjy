@@ -81,8 +81,10 @@ $(function() {
     // 参数1: 字段
     // 参数2: 校验状态
     // 参数3: 配置规则, 来配置我们的提示文本
-    $('#form').data("bootstrapValidator").updateStatus("categoryId", "VALID");
+    $('#form').data("bootstrapValidator").updateStatus("categoryId", "VALID")
   });
+
+
 
   // 4. 配置图片上传
   $('#fileupload').fileupload({
@@ -90,7 +92,7 @@ $(function() {
     dataType: "json",
     // done, 当图片上传完成, 响应回来时调用
     done: function( e, data ) {
-      console.log( data )
+      console.log( data );
       // 获取上传成功的图片地址
       var picAddr = data.result.picAddr;
       // 设置图片地址
