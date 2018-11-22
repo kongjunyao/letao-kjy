@@ -19,6 +19,9 @@ a:active {
 .mt_150{
     margin-top: 150px;
 }
+.mt_20{
+    margin-top:20px ;
+}
 .table.table-bordered th, .table.table-bordered td {
     text-align: center;
     vertical-align: middle;
