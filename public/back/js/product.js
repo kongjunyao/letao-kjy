@@ -7,7 +7,7 @@ $(function(){
 
     var currentPage = 1;
     var pageSize = 2;
-
+    var picArr = [];
 
 
 
@@ -26,7 +26,19 @@ $(function(){
                 var htmlStr = template("productTpl",info);
                 $('.lt_content tbody').html( htmlStr );
 
-
+                $('#paginator').bootstrapPaginator({
+                    // 指定版本
+                    bootstrapMajorVersion: 3,
+                    // 当前页
+                    currentPage: info.page,
+                    // 总页数
+                    totalPages: Math.ceil(  info.total / info.size ),
+                    // 给下面的页码添加点击事件
+                    onPageClicked: function( a, b, c, page ) {
+                        currentPage = page;
+                        render();
+                    }
+                })
             }
         })
 
@@ -41,5 +53,206 @@ $(function(){
 
 
 
+     $.ajax({
+         url: "/category/querySecondCategoryPaging",
+         type: "get",
+         data: {
+             page: 1,
+             pageSize: 100
+         },
+         success : function(info){
+             console.log(info);
+             var htmlStr = template("dropdownTpl",info);
+             $(".dropdown-menu").html(htmlStr);
+         }
+     })
+
+
+
+    $(".dropdown-menu").on("click","a",function(){
+
+        var txt = $(this).text();
+        var id = $(this).data("id");
+        $("#dropdownText").text(txt);
+        $("[name = 'brandId']").val(id);
+    })
+
+
+
+    //配置文件上传回调函数
+    $("#fileupload").fileupload({
+        //上传数据类型
+        dataType : "json",
+        //上传成功函数
+        done : function(e,data){
+            console.log(data);
+            //获取图片地址对象
+            var picObj = data.result;
+            //获取图片地址
+            var picAddr = picObj.picAddr;
+            // 新得到的图片对象, 应该推到数组的最前面    push pop shift unshift
+            picArr.unshift( picObj );
+            // 新的图片, 应该添加到 imgBox 最前面去
+            $("#imgBox").prepend("<img src='"+ picAddr +"' width='100'>");
+            if(picArr.length > 3){
+                // 删除数组的最后一项
+                picArr.pop();
+                // 除了删除数组的最后一项, 还需要将页面中渲染的最后一张图片删除掉
+                // 通过 last-of-type 找到imgBox盒子中最后一个 img 类型的标签, 让他自杀
+                $("#imgBox img:last-of-type").remove();
+            }
+            // 如果处理后, 图片数组的长度为 3, 说明已经选择了三张图片, 可以进行提交
+            // 需要将表单 picStatus 的校验状态, 置成 VALID
+            if ( picArr.length === 3 ) {
+                $('#form').data("bootstrapValidator").updateStatus("picStatus", "VALID")
+            };
+        }
+    })
+
+
+
+
+    //配饰表单校验
+    $("#form").bootstrapValidator({
+        excluded : [],
+
+        // 配置图标
+        feedbackIcons: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+
+        fields: {
+            // 二级分类id, 归属品牌
+            brandId: {
+                validators: {
+                    notEmpty: {
+                        message: "请选择二级分类"
+                    }
+                }
+            },
+            // 商品名称
+            proName: {
+                validators: {
+                    notEmpty: {
+                        message: "请输入商品名称"
+                    }
+                }
+            },
+            // 商品描述
+            proDesc: {
+                validators: {
+                    notEmpty: {
+                        message: "请输入商品描述"
+                    }
+                }
+            },
+            // 商品库存
+            // 要求: 必须是非零开头的数字, 非零开头, 也就是只能以 1-9 开头
+            // 数字: \d
+            // + 表示一个或多个
+            // * 表示零个或多个
+            // ? 表示零个或1个
+            // {n} 表示出现 n 次
+            num: {
+                validators: {
+                    notEmpty: {
+                        message: "请输入商品库存"
+                    },
+                    //正则校验
+                    regexp: {
+                        regexp: /^[1-9]\d*$/,
+                        message: '商品库存格式, 必须是非零开头的数字'
+                    }
+                }
+            },
+            // 尺码校验, 规则必须是 32-40, 两个数字-两个数字
+            size: {
+                validators: {
+                    notEmpty: {
+                        message: "请输入商品尺码"
+                    },
+                    //正则校验
+                    regexp: {
+                        regexp: /^\d{2}-\d{2}$/,
+                        message: '尺码格式, 必须是 32-40'
+                    }
+                }
+            },
+            // 商品价格
+            price: {
+                validators: {
+                    notEmpty: {
+                        message: "请输入商品价格"
+                    }
+                }
+            },
+            // 商品原价
+            oldPrice: {
+                validators: {
+                    notEmpty: {
+                        message: "请输入商品原价"
+                    }
+                }
+            },
+            // 标记图片是否上传满三张
+            picStatus: {
+                validators: {
+                    notEmpty: {
+                        message: "请上传3张图片"
+                    }
+                }
+            }
+        }
+
+
+
+    })
+
+
+
+
+
+    // 6. 注册校验成功事件
+    $("#form").on("success.form.bv",function(e){
+        //阻止默认提交
+        e.preventDefault();
+         //获取表单数据
+       var params = $('#form').serialize();
+
+        // 需要在参数的基础上拼接上这些参数
+        // &picName1=xx&picAddr1=xx
+        // &picName2=xx&picAddr2=xx
+        // &picName3=xx&picAddr3=xx
+
+        params += "&picName1" + picArr[0].picName +"&picAddr1"+ picArr[0].picAddr;
+        params += "&picName2" + picArr[1].picName +"&picAddr2"+ picArr[0].picAddr;
+        params += "&picName3" + picArr[2].picName +"&picAddr3"+ picArr[0].picAddr;
+        console.log(params);
+
+
+        $.ajax({
+            url: "/product/addProduct",
+            type: "post",
+            data: params,
+            success : function(info){
+                console.log(info);
+                if(info.success){
+                // 关闭模态框
+                    $('#addModal').modal("hide");
+                    // 重置校验状态和文本内容
+                    $('#form').data("bootstrapValidator").resetForm(true);
+                    // 重新渲染第一页
+                    currentPage = 1;
+                    render();
+                    // 删除结构中的所有图片
+                    $('#imgBox img').remove();
+                    // 重置数组 picArr
+                    picArr = [];
+                }
+            }
+        })
+    })
 
 });
