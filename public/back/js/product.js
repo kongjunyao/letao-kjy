@@ -4,16 +4,19 @@
 $(function(){
 
 
-
+    //定义当前页
     var currentPage = 1;
+    //定义页面数据
     var pageSize = 2;
+    //定义存放地址的数组
     var picArr = [];
 
 
-
+    //进入页面渲染
     render();
+    //定义render  函数
     function render(){
-
+        //发送ajax请求
         $.ajax({
             url:"/product/queryProductDetailList",
             type:"get",
@@ -23,6 +26,7 @@ $(function(){
             },
             success : function(info){
                 console.log(info);
+                //模板引擎
                 var htmlStr = template("productTpl",info);
                 $('.lt_content tbody').html( htmlStr );
 
@@ -46,31 +50,35 @@ $(function(){
 
 
 
-
+  ///点击显示模态框
     $("#addBtn").click(function(){
         $("#addModal").modal("show");
+    //发送请求
+        $.ajax({
+            url: "/category/querySecondCategoryPaging",
+            type: "get",
+            data: {
+                page: 1,
+                pageSize: 100
+            },
+            success : function(info){
+                console.log(info);
+                //模板引擎
+                var htmlStr = template("dropdownTpl",info);
+                $(".dropdown-menu").html(htmlStr);
+            }
+        })
+
     })
 
 
 
-     $.ajax({
-         url: "/category/querySecondCategoryPaging",
-         type: "get",
-         data: {
-             page: 1,
-             pageSize: 100
-         },
-         success : function(info){
-             console.log(info);
-             var htmlStr = template("dropdownTpl",info);
-             $(".dropdown-menu").html(htmlStr);
-         }
-     })
 
 
 
+  //给子元素注册点击事件
     $(".dropdown-menu").on("click","a",function(){
-
+        //将文本   id  设置给dropdownText   name = 'brandId'
         var txt = $(this).text();
         var id = $(this).data("id");
         $("#dropdownText").text(txt);
@@ -91,6 +99,10 @@ $(function(){
             //获取图片地址
             var picAddr = picObj.picAddr;
             // 新得到的图片对象, 应该推到数组的最前面    push pop shift unshift
+            //push 添加到数组最后一个
+            // pop 删除最后一个
+            // shift 删除第一个
+            // unshift 添加到第一个
             picArr.unshift( picObj );
             // 新的图片, 应该添加到 imgBox 最前面去
             $("#imgBox").prepend("<img src='"+ picAddr +"' width='100'>");
