@@ -103,7 +103,7 @@ $(function(){
         // 清空搜索框内容
         $('.search_input').val("");
 
-        //location.href = "searchList.html?key=" + key;
+        location.href = "searchList.html?key=" + key;
 
 
     
