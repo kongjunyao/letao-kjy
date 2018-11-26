@@ -45,17 +45,7 @@
                 <!-- 产品区域 -->
                 <div class="lt_product">
 
-                    <div class="lt_product_item">
-                        <a href="#">
-                            <img src="./images/product.jpg" alt="">
-                            <p class="info mui-ellipsis-2">adidas阿迪达斯 男式 场下休闲篮球鞋S83700场下休闲篮球鞋S83700 </p>
-                            <p>
-                                <span class="price">¥560</span>
-                                <span class="oldPrice">¥580</span>
-                            </p>
-                            <button class="mui-btn mui-btn-primary">立即购买</button>
-                        </a>
-                    </div>
+                    <!--挖个坑-->
 
                     <div class="loading"></div>
 
@@ -78,7 +68,23 @@
 </div>
 
 
-
+<script type="text/html" id="searchListTpl">
+    <ul>
+    {{ each data v i}}
+    <div class="lt_product_item">
+        <a href="product.html?productId={{ v.id }}">
+            <img src="{{ v.pic[0].picAddr }}" alt="">
+            <p class="info mui-ellipsis-2">{{ v.proName }} </p>
+            <p>
+                <span class="price">¥{{ v.price }}</span>
+                <span class="oldPrice">¥{{ v.oldPrice }}</span>
+            </p>
+            <button class="mui-btn mui-btn-primary">立即购买</button>
+        </a>
+    </div>
+        {{ /each }}
+    </ul>
+</script>
 
 
 

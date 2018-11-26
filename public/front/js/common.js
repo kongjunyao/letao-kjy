@@ -16,3 +16,22 @@ var gallery = mui('.mui-slider');
 gallery.slider({
     interval:1000//自动轮播周期，若为0则不自动播放，默认为0；
 });
+
+function getSearch( name ){
+    var search =  location.search;
+    // 解码成中文
+    search = decodeURI(search);
+    // 将 ? 去掉
+    search = search.slice(1);
+    // 根据 & 进行切割
+    var arr = search.split("&");
+    var obj = {};
+
+    arr.forEach(function(v,i){
+        var key = v.split("=")[0];
+        var value = v.split("=")[1];
+        obj[key] = value;
+    })
+
+    return obj[name];
+}

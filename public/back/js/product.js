@@ -87,39 +87,42 @@ $(function(){
 
 
 
-    //配置文件上传回调函数
-    $("#fileupload").fileupload({
-        //上传数据类型
-        dataType : "json",
-        //上传成功函数
-        done : function(e,data){
-            console.log(data);
-            //获取图片地址对象
+    // 4. 配置上传图片回调函数
+    $('#fileupload').fileupload({
+        // 返回数据类型
+        dataType: "json",
+        // 上传完图片, 响应的回调函数配置
+        // 每一张图片上传, 都会响应一次
+        done: function( e, data ) {
+            console.log( data );
+            // 获取图片地址对象
             var picObj = data.result;
-            //获取图片地址
+            // 获取图片地址
             var picAddr = picObj.picAddr;
+
             // 新得到的图片对象, 应该推到数组的最前面    push pop shift unshift
-            //push 添加到数组最后一个
-            // pop 删除最后一个
-            // shift 删除第一个
-            // unshift 添加到第一个
             picArr.unshift( picObj );
             // 新的图片, 应该添加到 imgBox 最前面去
-            $("#imgBox").prepend("<img src='"+ picAddr +"' width='100'>");
-            if(picArr.length > 3){
+            $('#imgBox').prepend('<img src="'+ picAddr +'" width="100">');
+
+            // 如果上传的图片个数大于 3个, 需要将最旧的那个(最后面的哪项), 要删除
+            if( picArr.length > 3 ) {
                 // 删除数组的最后一项
                 picArr.pop();
                 // 除了删除数组的最后一项, 还需要将页面中渲染的最后一张图片删除掉
                 // 通过 last-of-type 找到imgBox盒子中最后一个 img 类型的标签, 让他自杀
                 $("#imgBox img:last-of-type").remove();
             }
+
+
             // 如果处理后, 图片数组的长度为 3, 说明已经选择了三张图片, 可以进行提交
             // 需要将表单 picStatus 的校验状态, 置成 VALID
             if ( picArr.length === 3 ) {
                 $('#form').data("bootstrapValidator").updateStatus("picStatus", "VALID")
-            };
+            }
+
         }
-    })
+    });
 
 
 
@@ -238,9 +241,9 @@ $(function(){
         // &picName2=xx&picAddr2=xx
         // &picName3=xx&picAddr3=xx
 
-        params += "&picName1" + picArr[0].picName +"&picAddr1"+ picArr[0].picAddr;
-        params += "&picName2" + picArr[1].picName +"&picAddr2"+ picArr[0].picAddr;
-        params += "&picName3" + picArr[2].picName +"&picAddr3"+ picArr[0].picAddr;
+        params += "&picName1=" + picArr[0].picName +"&picAddr1="+ picArr[0].picAddr;
+        params += "&picName2=" + picArr[1].picName +"&picAddr2="+ picArr[1].picAddr;
+        params += "&picName3=" + picArr[2].picName +"&picAddr3="+ picArr[2].picAddr;
         console.log(params);
 
 
@@ -258,6 +261,8 @@ $(function(){
                     // 重新渲染第一页
                     currentPage = 1;
                     render();
+                    // 手动重置, 下拉菜单
+                    $('#dropdownText').text("请选择二级分类")
                     // 删除结构中的所有图片
                     $('#imgBox img').remove();
                     // 重置数组 picArr
